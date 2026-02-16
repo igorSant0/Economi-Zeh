@@ -1,0 +1,78 @@
+generator client {
+    provider  = "prisma-client-py"
+    interface = "asyncio"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id           String   @id @default(uuid())
+    name         String
+    taxId        String   @unique
+    email        String   @unique
+    passwordHash String   @map("password_hash")
+    createdAt    DateTime @default(now()) @map("created_at")
+
+    categories Category[]
+    expenses   Expense[]
+    plannings  Planning[]
+
+    @@map("user")
+}
+
+model Category {
+    id       String  @id @default(uuid())
+    title    String
+    colorHex String? @map("color_hex")
+
+    userId String @map("user_id")
+    user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+    expenses CategoryExpense[]
+
+    @@map("category")
+}
+
+model Expense {
+    id          String   @id @default(uuid())
+    description String?
+    unitValue   Float?   @map("unit_value")
+    quantity    Float?
+    date        DateTime
+    totalValue  Float?   @map("total_value")
+
+    userId String @map("user_id")
+    user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+    categories CategoryExpense[]
+
+    @@map("expense")
+}
+
+model Planning {
+    id             String    @id @default(uuid())
+    referenceMonth DateTime? @map("reference_month")
+    targetValue    Float?    @map("target_value")
+    title          String?
+    description    String?
+    type           String?
+
+    userId String @map("user_id")
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("planning")
+}
+
+model CategoryExpense {
+    expenseId String  @map("expense_id")
+    expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+    categoryId String   @map("category_id")
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    @@id([expenseId, categoryId])
+    @@map("category_expense")
+}
