@@ -1,0 +1,19 @@
+[tool.ruff]
+
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+
+select = ["E", "F", "I", "W"]
+ignore = []
+
+[tool.ruff.format]
+
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.isort]
+
+lines-between-types = 0
+no-lines-before = ["standard-library", "third-party", "first-party", "local-folder"]

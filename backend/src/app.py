@@ -1,6 +1,8 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from src.db import db
+from src.lib.utils.apiError import ApiError
 
 
 # Configuração do Ciclo de Vida (Ligar/Desligar banco)
@@ -15,6 +17,14 @@ async def lifespan(app: FastAPI):
 
 # Inicializa o App com o lifespan
 app = FastAPI(title="Economi-Zeh API", lifespan=lifespan)
+
+
+# Handler GLobal para ApiError
+@app.exception_handler(ApiError)
+async def api_error_handler(request: Request, exc: ApiError):
+    return JSONResponse(
+        status_code=exc.status_code, content={"error": exc.message, "stack": exc.stack}
+    )
 
 
 # Rota de Teste Básica

@@ -1,10 +1,10 @@
-from cryptography.fernet import Fernet
 import os
+from cryptography.fernet import Fernet
 
 KEY = os.getenv("ENCRYPTION_KEY")
 
 if not KEY:
-    raise ValueError("ENCRYPTION_KEY não definida nas variáveis de ambiente.")
+    raise ValueError("ENCRYPTION_KEY is not defined at env.")
 
 if isinstance(KEY, str):
     KEY = KEY.encode()
