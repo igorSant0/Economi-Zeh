@@ -8,10 +8,12 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+// TODO: refatorar esse prisma já que as nomenclaturas e relações parecem erradas
+
 model User {
     id           String   @id @default(uuid())
     name         String
-    taxId        String   @unique
+    cpf          String   @unique
     email        String   @unique
     passwordHash String   @map("password_hash")
     createdAt    DateTime @default(now()) @map("created_at")
