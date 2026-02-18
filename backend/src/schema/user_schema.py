@@ -11,6 +11,7 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    id_user: str
     name: Optional[str] = None
     email: Optional[EmailStr] = None
     cpf: Optional[str] = None
@@ -18,7 +19,6 @@ class UserUpdate(BaseModel):
 
 
 class UserGetOne(BaseModel):
-    name: Optional[str] = None
     id_user: str
     cpf: Optional[str] = None
 

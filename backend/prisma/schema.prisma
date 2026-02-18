@@ -8,63 +8,64 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-
 model user {
-    id_user          String   @id @default(uuid())
-    user_name        String
-    user_cpf         String   @unique
-    user_email       String
-    user_password    String
-    created_at       DateTime @default(now())
+    id_user       String    @id @default(uuid())
+    user_name     String
+    user_cpf      String    @unique
+    user_email    String
+    user_password String
+    created_at    DateTime  @default(now())
+    is_deleted    Boolean   @default(false)
+    deleted_date  DateTime?
 
-    categories       category[]
-    expenses         expense[]
-    plannings        planning[]
+    categories category[]
+    expenses   expense[]
+    plannings  planning[]
 }
 
 model category {
-    id_category         String  @id @default(uuid())
-    category_title      String
-    category_color_hex  String?
+    id_category        String  @id @default(uuid())
+    category_title     String
+    category_color_hex String?
 
-    fk_id_user          String
-    user          user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Restrict)
+    fk_id_user String
+    user       user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Restrict)
 
-    expenses      category_expense[]
+    expenses category_expense[]
 }
 
 model expense {
-    id_expense      String   @id @default(uuid())
+    id_expense          String   @id @default(uuid())
     expense_description String?
     expense_unit_value  Float?
     expense_quantity    Float?
     expense_date        DateTime
     expense_total_value Float?
 
-    fk_id_user    String
-    user          user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Restrict)
+    fk_id_user String
+    user       user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Restrict)
 
-    categories    category_expense[]
+    categories category_expense[]
 }
 
 model planning {
-    id_planning         String    @id @default(uuid())
+    id_planning              String    @id @default(uuid())
     planning_reference_month DateTime?
     planning_target_value    Float?
     planning_title           String?
     planning_description     String?
     planning_type            String?
 
-    fk_id_user    String
-    user          user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Cascade)
+    fk_id_user String
+    user       user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Cascade)
 }
 
 model category_expense {
-    fk_id_expense   String
-    expense         expense   @relation(fields: [fk_id_expense], references: [id_expense], onDelete: Cascade)
+    fk_id_expense String
+    expense       expense @relation(fields: [fk_id_expense], references: [id_expense], onDelete: Cascade)
 
-    fk_id_category  String
-    category        category  @relation(fields: [fk_id_category], references: [id_category], onDelete: Cascade)
+    fk_id_category String
+    category       category @relation(fields: [fk_id_category], references: [id_category], onDelete: Cascade)
 
     @@id([fk_id_expense, fk_id_category])
 }

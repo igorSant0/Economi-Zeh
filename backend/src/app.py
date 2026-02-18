@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from src.db import db
+from src.db import prisma
 from src.lib.utils.apiError import ApiError
 
 
@@ -9,10 +9,10 @@ from src.lib.utils.apiError import ApiError
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("🔄 Conectando ao Banco de Dados...")
-    await db.connect()
+    await prisma.connect()
     yield
     print("🛑 Desconectando do Banco de Dados...")
-    await db.disconnect()
+    await prisma.disconnect()
 
 
 # Inicializa o App com o lifespan
