@@ -8,73 +8,63 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-// TODO: refatorar esse prisma já que as nomenclaturas e relações parecem erradas
 
-model User {
-    id           String   @id @default(uuid())
-    name         String
-    cpf          String   @unique
-    email        String   @unique
-    passwordHash String   @map("password_hash")
-    createdAt    DateTime @default(now()) @map("created_at")
+model user {
+    id_user          String   @id @default(uuid())
+    user_name        String
+    user_cpf         String   @unique
+    user_email       String
+    user_password    String
+    created_at       DateTime @default(now())
 
-    categories Category[]
-    expenses   Expense[]
-    plannings  Planning[]
-
-    @@map("user")
+    categories       category[]
+    expenses         expense[]
+    plannings        planning[]
 }
 
-model Category {
-    id       String  @id @default(uuid())
-    title    String
-    colorHex String? @map("color_hex")
+model category {
+    id_category         String  @id @default(uuid())
+    category_title      String
+    category_color_hex  String?
 
-    userId String @map("user_id")
-    user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+    fk_id_user          String
+    user          user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Restrict)
 
-    expenses CategoryExpense[]
-
-    @@map("category")
+    expenses      category_expense[]
 }
 
-model Expense {
-    id          String   @id @default(uuid())
-    description String?
-    unitValue   Float?   @map("unit_value")
-    quantity    Float?
-    date        DateTime
-    totalValue  Float?   @map("total_value")
+model expense {
+    id_expense      String   @id @default(uuid())
+    expense_description String?
+    expense_unit_value  Float?
+    expense_quantity    Float?
+    expense_date        DateTime
+    expense_total_value Float?
 
-    userId String @map("user_id")
-    user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+    fk_id_user    String
+    user          user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Restrict)
 
-    categories CategoryExpense[]
-
-    @@map("expense")
+    categories    category_expense[]
 }
 
-model Planning {
-    id             String    @id @default(uuid())
-    referenceMonth DateTime? @map("reference_month")
-    targetValue    Float?    @map("target_value")
-    title          String?
-    description    String?
-    type           String?
+model planning {
+    id_planning         String    @id @default(uuid())
+    planning_reference_month DateTime?
+    planning_target_value    Float?
+    planning_title           String?
+    planning_description     String?
+    planning_type            String?
 
-    userId String @map("user_id")
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@map("planning")
+    fk_id_user    String
+    user          user   @relation(fields: [fk_id_user], references: [id_user], onDelete: Cascade)
 }
 
-model CategoryExpense {
-    expenseId String  @map("expense_id")
-    expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+model category_expense {
+    fk_id_expense   String
+    expense         expense   @relation(fields: [fk_id_expense], references: [id_expense], onDelete: Cascade)
 
-    categoryId String   @map("category_id")
-    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    fk_id_category  String
+    category        category  @relation(fields: [fk_id_category], references: [id_category], onDelete: Cascade)
 
-    @@id([expenseId, categoryId])
-    @@map("category_expense")
+    @@id([fk_id_expense, fk_id_category])
 }
