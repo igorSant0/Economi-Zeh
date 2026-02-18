@@ -4,26 +4,19 @@ from src.db import prisma
 from src.lib.security.hash import hash_password
 from src.lib.utils.apiError import ApiError
 from src.lib.utils.prismaTools import find_many_with_page_info, update_parcial_data
-from src.schema.user_schema import (
-    UserCreate,
-    UserDelete,
-    UserGetMany,
-    UserGetOne,
-    UserUpdate,
-)
+from src.schemas.user_schema import *
 
 
 class ValidateDataDict(TypedDict, total=False):
     user_cpf: Optional[str]
     user_id: Optional[str]
 
-
 class UserService:
     async def create(self, data: UserCreate) -> UserModel:
         if await self.__validateIfExist({"user_cpf": data.cpf}):
             raise ApiError(status="CONFLICT", message="User already exist")
 
-        _hashed_password = hash_password(data.password)
+        _hashed_password = await hash_password(data.password)
 
         return await prisma.user.create(
             data={
@@ -80,19 +73,11 @@ class UserService:
 
         return _updated_data
 
-    # TODO: implementar softDelete
-    async def delete(self, data: UserDelete) -> UserModel | None:
-        # Verifica existência usando apenas um campo único por vez
-        user = None
-        if data.id_user:
-            user = await prisma.user.find_unique(where={"id_user": data.id_user})
-        elif data.cpf:
-            user = await prisma.user.find_unique(where={"user_cpf": data.cpf})
+    async def delete(self, data: UserDelete):
+        if await self.__validateIfExist({"user_id": data.id_user}) is None:
+            raise ApiError(status="NOT_FOUND", message="User not found")
 
-        if not user:
-            return None
-
-        return await prisma.user.delete(where={"id_user": user.id_user})
+        await prisma.user.update(where={"id_user": data.id_user}, data={"is_deleted": True})
 
     async def __validateIfExist(self, data: ValidateDataDict):
         user_cpf = data.get("user_cpf")
