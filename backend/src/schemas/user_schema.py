@@ -2,28 +2,11 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
-class UserCreate(BaseModel):
-    name: str = Field(..., min_length=3, description="Full name")
-    email: EmailStr = Field(..., description="Unique system e-mail")
-    cpf: str = Field(..., min_length=11, max_length=14, description="CPF")
-    password: str = Field(..., min_length=6, description="Strong password")
-    model_config = ConfigDict(extra="forbid")
-
-
-class UserUpdate(BaseModel):
+class UserParams(BaseModel):
     id_user: str
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    cpf: Optional[str] = None
-    model_config = ConfigDict(extra="forbid")
 
 
-class UserGetOne(BaseModel):
-    id_user: str
-    cpf: Optional[str] = None
-
-
-class UserGetMany(BaseModel):
+class UserQuerys(BaseModel):
     name: Optional[str] = None
     email: Optional[EmailStr] = None
     cpf: Optional[str] = None
@@ -31,15 +14,24 @@ class UserGetMany(BaseModel):
     limit: Optional[int] = Field(10, ge=1, le=100, description="Items per page")
 
 
-class UserDelete(BaseModel):
-    id_user: str
+class UserCreateData(BaseModel):
+    name: str = Field(..., min_length=3, description="Full name")
+    email: EmailStr = Field(..., description="Unique system e-mail")
+    cpf: str = Field(..., min_length=11, max_length=14, description="CPF")
+    password: str = Field(..., min_length=6, description="Strong password")
+    model_config = ConfigDict(extra="forbid")
+
+
+class UserUpdateData(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
     cpf: Optional[str] = None
     model_config = ConfigDict(extra="forbid")
 
 
 class UserResponse(BaseModel):
-    id: str
+    id_user: str
     name: str
     email: str
-    taxId: str
+    cpf: str
     model_config = ConfigDict(from_attributes=True)

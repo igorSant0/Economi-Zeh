@@ -1,33 +1,39 @@
-from fastapi import APIRouter, Depends
-from src.controllers.user_controller import UserController
-from src.schemas.user_schema import UserCreate, UserGetOne, UserGetMany, UserUpdate, UserDelete
+from typing import List
+from fastapi import APIRouter, Body, Depends
 from src.config.routes_config import paths
+from src.controllers.user_controller import UserController
+from src.schemas.user_schema import (
+    UserCreateData,
+    UserParams,
+    UserQuerys,
+    UserResponse,
+    UserUpdateData,
+)
 
 controller = UserController()
 router = APIRouter(prefix=paths.user.PREFIX, tags=["User"])
 
 
-@router.post("")
-async def create_user(data: UserCreate):
+@router.post("", response_model=UserResponse)
+async def create_user(data: UserCreateData = Body(...)):
     return await controller.create(data)
 
 
-@router.get("")
-async def get_users(filters: UserGetMany = Depends()):
+@router.get("", response_model=List[UserResponse])
+async def get_users(filters: UserQuerys = Depends()):
     return await controller.getMany(filters)
 
 
-@router.get(paths.user.GET_BY_ID)
-async def get_user(data: UserGetOne = Depends()):
-    return await controller.getOne(data)
+@router.get(paths.user.GET_BY_ID, response_model=UserResponse)
+async def get_user(params: UserParams = Depends()):
+    return await controller.getOne(params)
 
 
-@router.put(paths.user.GET_BY_ID)
-async def update_user(data: UserUpdate):
-    return await controller.update(data)
+@router.put(paths.user.GET_BY_ID, response_model=UserResponse)
+async def update_user(params: UserParams = Depends(), data: UserUpdateData = Body(...)):
+    return await controller.update(params, data)
 
 
 @router.delete(paths.user.GET_BY_ID)
-async def delete_user(data: UserDelete):
-    return await controller.delete(data)
-
+async def delete_user(params: UserParams = Depends()):
+    return await controller.delete(params)
