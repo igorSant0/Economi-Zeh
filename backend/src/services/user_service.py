@@ -19,16 +19,16 @@ class ValidateDataDict(TypedDict, total=False):
 
 class UserService:
     async def create(self, data: UserCreateData) -> UserModel:
-        if await self.__validateIfExist({"user_cpf": data.cpf}):
+        if await self.__validateIfExist({"user_cpf": data.user_cpf}):
             raise ApiError(status="CONFLICT", message="User already exist")
 
-        _hashed_password = await hash_password(data.password)
+        _hashed_password = await hash_password(data.user_password)
 
         return await prisma.user.create(
             data={
-                "user_name": data.name,
-                "user_email": data.email,
-                "user_cpf": data.cpf,
+                "user_name": data.user_name,
+                "user_email": data.user_email,
+                "user_cpf": data.user_cpf,
                 "user_password": _hashed_password,
             }
         )
@@ -42,15 +42,15 @@ class UserService:
     async def getMany(self, filters: UserQuerys):
         where_clause = {}
 
-        if filters.name:
+        if filters.user_name:
             where_clause["user_name"] = {
-                "contains": filters.name,
+                "contains": filters.user_name,
                 "mode": "insensitive",
             }
-        if filters.email:
-            where_clause["user_email"] = filters.email
-        if filters.cpf:
-            where_clause["user_cpf"] = filters.cpf
+        if filters.user_email:
+            where_clause["user_email"] = filters.user_email
+        if filters.user_cpf:
+            where_clause["user_cpf"] = filters.user_cpf
 
         return await find_many_with_page_info(
             prisma.user,

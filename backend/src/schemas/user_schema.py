@@ -7,31 +7,31 @@ class UserParams(BaseModel):
 
 
 class UserQuerys(BaseModel):
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    cpf: Optional[str] = None
+    user_name: Optional[str] = None
+    user_email: Optional[EmailStr] = None
+    user_cpf: Optional[str] = None
     page: Optional[int] = Field(1, ge=1, description="Page number")
     limit: Optional[int] = Field(10, ge=1, le=100, description="Items per page")
 
 
 class UserCreateData(BaseModel):
-    name: str = Field(..., min_length=3, description="Full name")
-    email: EmailStr = Field(..., description="Unique system e-mail")
-    cpf: str = Field(..., min_length=11, max_length=14, description="CPF")
-    password: str = Field(..., min_length=6, description="Strong password")
+    user_name: str = Field(..., min_length=3, description="Full name")
+    user_email: EmailStr = Field(..., description="Unique system e-mail")
+    user_cpf: str = Field(..., min_length=11, max_length=14, description="CPF")
+    user_password: str = Field(..., min_length=6, description="Strong password")
     model_config = ConfigDict(extra="forbid")
 
 
 class UserUpdateData(BaseModel):
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    cpf: Optional[str] = None
+    user_name: Optional[str] = None
+    user_email: Optional[EmailStr] = None
+    user_cpf: Optional[str] = None
     model_config = ConfigDict(extra="forbid")
 
 
 class UserResponse(BaseModel):
     id_user: str
-    name: str
-    email: str
-    cpf: str
+    user_name: str
+    user_email: str
+    user_cpf: str
     model_config = ConfigDict(from_attributes=True)
