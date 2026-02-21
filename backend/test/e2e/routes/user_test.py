@@ -1,15 +1,8 @@
 import pytest
 from httpx import AsyncClient
 from dirty_equals import IsStr, IsUUID, IsDatetime, IsList
-from typing import List
-import sys
-from pathlib import Path
 
-# Adiciona o diretório backend ao path para importar seeds
-backend_path = Path(__file__).parent.parent.parent.parent.parent
-sys.path.insert(0, str(backend_path))
-
-from prisma.seeds.user_seed import userSeed
+from database.seeds.user_seed import userSeed
 
 pytestmark = pytest.mark.asyncio
 
@@ -93,8 +86,8 @@ class TestUpdate:
         res = await async_client.put(f"{USER_ROUTE}/{user.id_user}", json=update_payload)
 
         assert res.status_code == 200
-        
-        expected_updated_body = {**expect_get_one_body, "user_name": "Nome Atualizado"}
+
+        expected_updated_body = {**expect_get_one_body, "user_name": "updated_name"}
         assert res.json() == expected_updated_body
 
 

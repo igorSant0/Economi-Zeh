@@ -3,9 +3,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from src.db import prisma
 from src.lib.utils.apiError import ApiError
+from src.routes.private.user_routes import router as user_router
 
 
-# Configuração do Ciclo de Vida (Ligar/Desligar banco)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("🔄 Conectando ao Banco de Dados...")
@@ -15,11 +15,11 @@ async def lifespan(app: FastAPI):
     await prisma.disconnect()
 
 
-# Inicializa o App com o lifespan
 app = FastAPI(title="Economi-Zeh API", lifespan=lifespan)
 
+app.include_router(user_router)
 
-# Handler GLobal para ApiError
+
 @app.exception_handler(ApiError)
 async def api_error_handler(request: Request, exc: ApiError):
     return JSONResponse(
@@ -27,7 +27,6 @@ async def api_error_handler(request: Request, exc: ApiError):
     )
 
 
-# Rota de Teste Básica
 @app.get("/")
 def read_root():
     return {"message": "API Economi-Zeh rodando com Prisma! 🚀"}

@@ -34,7 +34,7 @@ class UserService:
         )
 
     async def getOne(self, params: UserParams) -> UserModel:
-        _user = await self.__validateIfExist({"user_id": params.id_user})
+        _user = await self.__validateIfExist({"user_id": params.user_id})
         if _user is None:
             raise ApiError(status="NOT_FOUND", message="User not found")
         return _user
@@ -61,12 +61,12 @@ class UserService:
         )
 
     async def update(self, params: UserParams, data: UserUpdateData) -> UserModel:
-        if await self.__validateIfExist({"user_id": params.id_user}) is None:
+        if await self.__validateIfExist({"user_id": params.user_id}) is None:
             raise ApiError(status="NOT_FOUND", message="User not found")
 
         _updated_data = await update_parcial_data(
             prisma.user,
-            where={"id_user": params.id_user},
+            where={"id_user": params.user_id},
             data=data.model_dump(exclude_unset=True),
         )
 
@@ -76,10 +76,10 @@ class UserService:
         return _updated_data
 
     async def delete(self, params: UserParams):
-        if await self.__validateIfExist({"user_id": params.id_user}) is None:
+        if await self.__validateIfExist({"user_id": params.user_id}) is None:
             raise ApiError(status="NOT_FOUND", message="User not found")
 
-        await prisma.user.update(where={"id_user": params.id_user}, data={"is_deleted": True})
+        await prisma.user.update(where={"id_user": params.user_id}, data={"is_deleted": True})
 
     async def __validateIfExist(self, data: ValidateDataDict):
         user_cpf = data.get("user_cpf")

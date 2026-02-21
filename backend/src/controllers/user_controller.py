@@ -7,16 +7,16 @@ class UserController:
         self.service = UserService()
 
     async def create(self, data: UserCreateData):
-        return await self.create(data)
+        return await self.service.create(data)
 
     async def getOne(self, params: UserParams):
-        return await self.getOne(params)
+        return await self.service.getOne(params)
 
     async def getMany(self, filters: UserQuerys):
-        return await self.getMany(filters)
+        return await self.service.getMany(filters)
 
     async def update(self, params: UserParams, data: UserUpdateData):
-        return await self.update(params, data)
+        return await self.service.update(params, data)
 
     async def delete(self, params: UserParams):
-        return await self.delete(params)
+        return await self.service.delete(params)

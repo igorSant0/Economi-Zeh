@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserParams(BaseModel):
-    id_user: str
+    user_id: str
 
 
 class UserQuerys(BaseModel):
