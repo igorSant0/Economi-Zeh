@@ -1,19 +1,39 @@
-[tool.ruff]
+[tool.poetry]
+name = "economizeh-backend"
+version = "0.1.0"
+description = "Backend for Economi-Zeh"
+authors = ["Igor Santana <santanaigor312@email.com>"]
+package-mode = false
 
-line-length = 88
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.110.0"
+uvicorn = "^0.29.0"
+prisma = "^0.12.0"
+passlib = "^1.7.4"
+ruff = "^0.4.4"
+pytest = "^8.2.0"
+httpx = "^0.28.1"
+pytest-asyncio = "^0.23.6"
+dirty-equals = "^0.11"
+email-validator = "^2.1.0"
+
+[tool.ruff]
+line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]
-
 select = ["E", "F", "I", "W"]
 ignore = []
 
 [tool.ruff.format]
-
 quote-style = "double"
 indent-style = "space"
 
 [tool.ruff.lint.isort]
-
 lines-between-types = 0
 no-lines-before = ["standard-library", "third-party", "first-party", "local-folder"]
+[dependency-groups]
+dev = [
+    "dirty-equals (>=0.11,<0.12)"
+]

@@ -1,0 +1,15 @@
+- Relação dos ícones customizados utilizados no projeto
+- Para que essa configuração funcione é necessário ter a extensão Material Icon Theme (PKief.material-icon-theme)
+
+{
+    "material-icon-theme.files.associations": {
+    "*.controller.py": "controller",
+    "*.schema.py": "Scheme",
+    "*.service.py": "Craco",
+    "*.routes.py": "Routing",
+    "__init__.py": "schema",
+  },
+    "material-icon-theme.folders.associations": {
+    "services": "Pipe",
+  },
+}

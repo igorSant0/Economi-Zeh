@@ -1,18 +1,42 @@
 version: "3.8"
 
 services:
-  db:
-    image: postgres:15
-    container_name: economizeh_db
-    restart: always
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: secret123
-      POSTGRES_DB: economizeh_db
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    db:
+        image: postgres:15
+        container_name: economizeh_db
+        restart: always
+        environment:
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: secret123
+            POSTGRES_DB: economizeh_db
+        ports:
+            - "5434:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d economizeh_db"]
+            interval: 3s
+            timeout: 6s
+            retries: 3
+
+    backend:
+        build: .
+        container_name: economizeh_backend
+        depends_on:
+            db:
+                condition: service_healthy
+        environment:
+            DATABASE_URL: postgres://admin:secret123@db:5432/economizeh_db
+        volumes:
+            - .:/app
+        command: >
+            sh -c "
+              prisma migrate deploy &&
+              uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload &&
+              poetry install
+            "
+        ports:
+            - "8000:8000"
 
 volumes:
-  postgres_data:
+    postgres_data:
