@@ -33,7 +33,6 @@ class TestCreate:
         res = await async_client.post(USER_ROUTE, json=new_user_data)
 
         assert res.status_code == 201
-        print(res.json())
         assert res.json() == expect_get_one_body
 
     async def test_should_return_409_when_cpf_already_exists(self, async_client: AsyncClient):
