@@ -34,3 +34,15 @@ async def update_parcial_data(model, where: dict, data: Dict[str, Any]):
         return None
 
     return await model.update(where=where, data=parcial_data)
+
+
+async def clean_database(db):
+    await db.execute_raw('''
+        DO $$ DECLARE
+            r RECORD;
+        BEGIN
+            FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename != '_prisma_migrations') LOOP
+                EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' CASCADE;';
+            END LOOP;
+        END $$;
+    ''')

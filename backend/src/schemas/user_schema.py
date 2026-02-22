@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from datetime import datetime
 
 
 class UserParams(BaseModel):
@@ -34,4 +35,17 @@ class UserResponse(BaseModel):
     user_name: str
     user_email: str
     user_cpf: str
+    created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+
+class PaginationInfo(BaseModel):
+    count: int
+    lastPage: int
+    page: int
+    perPage: int
+
+
+class UserListResponse(BaseModel):
+    data: List[UserResponse]
+    pagination: PaginationInfo

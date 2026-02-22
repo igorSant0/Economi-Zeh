@@ -33,6 +33,7 @@ class TestCreate:
         res = await async_client.post(USER_ROUTE, json=new_user_data)
 
         assert res.status_code == 201
+        print(res.json())
         assert res.json() == expect_get_one_body
 
     async def test_should_return_409_when_cpf_already_exists(self, async_client: AsyncClient):
@@ -43,7 +44,6 @@ class TestCreate:
 
         assert res.status_code == 409
         assert "already exist" in res.json()["error"].lower()
-
 
 class TestGetOne:
 
@@ -62,19 +62,21 @@ class TestGetOne:
         assert res.status_code == 404
         assert res.json()["error"] == "User not found"
 
-
 class TestGetMany:
 
     async def test_should_get_many_users_successfully(self, async_client: AsyncClient):
         res = await async_client.get(USER_ROUTE)
 
         assert res.status_code == 200
-        assert isinstance(res.json(), list)
-        assert len(res.json()) >= 1
+        
+        response_data = res.json()
+        assert "data" in response_data
+        assert "pagination" in response_data
+        assert isinstance(response_data["data"], list)
+        assert len(response_data["data"]) >= 1
 
-        for item in res.json():
+        for item in response_data["data"]:
             assert item == expect_get_many_body
-
 
 class TestUpdate:
 
@@ -89,7 +91,6 @@ class TestUpdate:
 
         expected_updated_body = {**expect_get_one_body, "user_name": "updated_name"}
         assert res.json() == expected_updated_body
-
 
 class TestDelete:
 

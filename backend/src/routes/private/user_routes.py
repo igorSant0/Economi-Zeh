@@ -1,4 +1,3 @@
-from typing import List
 from fastapi import APIRouter, Body, Depends
 from src.config.routes_config import paths
 from src.controllers.user_controller import UserController
@@ -8,6 +7,7 @@ from src.schemas.user_schema import (
     UserQuerys,
     UserResponse,
     UserUpdateData,
+    UserListResponse,
 )
 
 controller = UserController()
@@ -19,7 +19,7 @@ async def create_user(data: UserCreateData = Body(...)):
     return await controller.create(data)
 
 
-@router.get("", response_model=List[UserResponse], status_code=200)
+@router.get("", response_model=UserListResponse, status_code=200)
 async def get_users(filters: UserQuerys = Depends()):
     return await controller.getMany(filters)
 
