@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useUsers } from "@/hooks/user.hook";
 
 function App() {
-  const [count, setCount] = useState(0)
+  // O React Query retorna 'data', que renomeamos para 'response' para não confundir 
+  // com o array 'data' que vem de dentro do seu UserListResponse
+  const { data: response, isLoading, isError } = useUsers();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+      <h1>💸 Economi-Zeh</h1>
+      <h2>Usuários Cadastrados</h2>
+
+      {isLoading && <p>Carregando dados do servidor...</p>}
+
+      {isError && (
+        <div style={{ color: "red", marginTop: "1rem" }}>
+          <p><strong>Erro ao conectar com o backend.</strong></p>
+          <p>Verifique se:</p>
+          <ul>
+            <li>O FastAPI e o Banco de Dados estão rodando.</li>
+            <li>O CORS foi liberado no `app.py` do backend.</li>
+          </ul>
+        </div>
+      )}
+
+      {/* Acessamos response.data porque o seu schema define um objeto com a propriedade 'data' contendo o array */}
+      {response?.data && (
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {response.data.map((user) => (
+            <li 
+              key={user.id_user} 
+              style={{ padding: "10px", borderBottom: "1px solid #ccc", marginBottom: "10px" }}
+            >
+              <strong>{user.user_name}</strong> <br />
+              <small>Email: {user.user_email}</small> <br />
+              <small>CPF: {user.user_cpf}</small>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;

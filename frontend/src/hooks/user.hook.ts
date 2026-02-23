@@ -1,15 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import type { User } from "@/types/user.types";
+import { userService } from "@/services/user.service";
+import type { UserQuerys } from "@/types/user.types";
 
-const fetchUsers = async (): Promise<User[]> => {
-    const response = await api.get("/user");
-    return response.data;
-};
-
-export const useUsers = () => {
-    return useQuery({
-        queryKey: ["users"],
-        queryFn: fetchUsers,
-    });
+export const useUsers = (filters?: UserQuerys) => {
+  return useQuery({
+    queryKey: ["users", filters],
+    queryFn: () => userService.getMany(filters),
+  });
 };
