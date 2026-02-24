@@ -3,11 +3,11 @@ from src.config.routes_config import paths
 from src.controllers.user_controller import UserController
 from src.schemas.user_schema import (
     UserCreateData,
+    UserListResponse,
     UserParams,
     UserQuerys,
     UserResponse,
     UserUpdateData,
-    UserListResponse,
 )
 
 controller = UserController()

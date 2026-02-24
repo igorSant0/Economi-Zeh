@@ -1,4 +1,9 @@
-from src.schemas.user_schema import UserCreateData, UserParams, UserQuerys, UserUpdateData
+from src.schemas.user_schema import (
+    UserCreateData,
+    UserParams,
+    UserQuerys,
+    UserUpdateData,
+)
 from src.services.user_service import UserService
 
 

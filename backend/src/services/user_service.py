@@ -29,6 +29,7 @@ class UserService:
                 "user_name": data.user_name,
                 "user_email": data.user_email,
                 "user_cpf": data.user_cpf,
+                "user_phone": data.user_phone,
                 "user_password": _hashed_password,
             }
         )

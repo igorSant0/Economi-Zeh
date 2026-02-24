@@ -14,6 +14,7 @@ model user {
     user_cpf      String    @unique
     user_email    String
     user_password String
+    user_phone    String    @unique
     created_at    DateTime  @default(now())
     is_deleted    Boolean   @default(false)
     deleted_date  DateTime?
