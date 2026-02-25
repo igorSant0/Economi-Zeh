@@ -1,7 +1,6 @@
 import pytest
+from dirty_equals import IsDatetime, IsStr, IsUUID
 from httpx import AsyncClient
-from dirty_equals import IsStr, IsUUID, IsDatetime, IsList
-
 from database.seeds.user_seed import userSeed
 
 pytestmark = pytest.mark.asyncio
@@ -13,6 +12,7 @@ new_user_data = {
     "user_name": "Sophia Monteiro",
     "user_email": "sophia.monteiro@testemail.com",
     "user_cpf": "12345678901",
+    "user_phone": "00000000",
     "user_password": "secure_password",
 }
 
@@ -21,6 +21,7 @@ expect_get_one_body = {
     "user_name": IsStr(),
     "user_email": IsStr(),
     "user_cpf": IsStr(),
+    "user_phone": IsStr(),
     "created_at": IsDatetime() | IsStr(),
 }
 
@@ -28,7 +29,6 @@ expect_get_many_body = expect_get_one_body
 
 
 class TestCreate:
-
     async def test_should_create_user_successfully(self, async_client: AsyncClient):
         res = await async_client.post(USER_ROUTE, json=new_user_data)
 
@@ -57,7 +57,11 @@ class TestCreate:
         assert res.status_code == 422
 
     async def test_should_return_422_when_password_is_too_short(self, async_client: AsyncClient):
-        short_password_data = {**new_user_data, "user_email": "test@test.com", "user_password": "123"}
+        short_password_data = {
+            **new_user_data,
+            "user_email": "test@test.com",
+            "user_password": "123",
+        }
         res = await async_client.post(USER_ROUTE, json=short_password_data)
 
         assert res.status_code == 422
@@ -74,8 +78,8 @@ class TestCreate:
 
         assert res.status_code == 422
 
-class TestGetOne:
 
+class TestGetOne:
     async def test_should_get_one_user_successfully(self, async_client: AsyncClient, prisma_client):
         users = await userSeed(prisma_client)
         user = users[0]
@@ -91,13 +95,13 @@ class TestGetOne:
         assert res.status_code == 404
         assert res.json()["error"] == "User not found"
 
-class TestGetMany:
 
+class TestGetMany:
     async def test_should_get_many_users_successfully(self, async_client: AsyncClient):
         res = await async_client.get(USER_ROUTE)
 
         assert res.status_code == 200
-        
+
         response_data = res.json()
         assert "data" in response_data
         assert "pagination" in response_data
@@ -145,15 +149,17 @@ class TestGetMany:
         assert response_data["pagination"]["page"] == 1
         assert response_data["pagination"]["perPage"] == 2
 
-    async def test_should_return_empty_list_when_no_users_match_filter(self, async_client: AsyncClient):
+    async def test_should_return_empty_list_when_no_users_match_filter(
+        self, async_client: AsyncClient
+    ):
         res = await async_client.get(f"{USER_ROUTE}?user_name=NonExistentUser12345")
 
         assert res.status_code == 200
         response_data = res.json()
         assert len(response_data["data"]) == 0
 
-class TestUpdate:
 
+class TestUpdate:
     async def test_should_update_user_successfully(self, async_client: AsyncClient, prisma_client):
         users = await userSeed(prisma_client)
         user = users[0]
@@ -166,14 +172,18 @@ class TestUpdate:
         expected_updated_body = {**expect_get_one_body, "user_name": "updated_name"}
         assert res.json() == expected_updated_body
 
-    async def test_should_return_404_when_updating_nonexistent_user(self, async_client: AsyncClient):
+    async def test_should_return_404_when_updating_nonexistent_user(
+        self, async_client: AsyncClient
+    ):
         update_payload = {"user_name": "updated_name"}
         res = await async_client.put(f"{USER_ROUTE}/{UNEXIST_ID}", json=update_payload)
 
         assert res.status_code == 404
         assert res.json()["error"] == "User not found"
 
-    async def test_should_return_400_when_updating_without_fields(self, async_client: AsyncClient, prisma_client):
+    async def test_should_return_400_when_updating_without_fields(
+        self, async_client: AsyncClient, prisma_client
+    ):
         users = await userSeed(prisma_client)
         user = users[0]
 
@@ -182,7 +192,9 @@ class TestUpdate:
         assert res.status_code == 400
         assert "at least one field" in res.json()["error"].lower()
 
-    async def test_should_return_422_when_updating_with_invalid_email(self, async_client: AsyncClient, prisma_client):
+    async def test_should_return_422_when_updating_with_invalid_email(
+        self, async_client: AsyncClient, prisma_client
+    ):
         users = await userSeed(prisma_client)
         user = users[0]
 
@@ -191,8 +203,8 @@ class TestUpdate:
 
         assert res.status_code == 422
 
-class TestDelete:
 
+class TestDelete:
     async def test_should_delete_user_successfully(self, async_client: AsyncClient, prisma_client):
         users = await userSeed(prisma_client)
         user = users[0]
@@ -203,7 +215,9 @@ class TestDelete:
         get_res = await async_client.get(f"{USER_ROUTE}/{user.id_user}")
         assert get_res.status_code == 404
 
-    async def test_should_return_404_when_deleting_nonexistent_user(self, async_client: AsyncClient):
+    async def test_should_return_404_when_deleting_nonexistent_user(
+        self, async_client: AsyncClient
+    ):
         res = await async_client.delete(f"{USER_ROUTE}/{UNEXIST_ID}")
 
         assert res.status_code == 404
