@@ -22,7 +22,8 @@ class UserService:
         if await self.__validateIfExist({"user_cpf": data.user_cpf}):
             raise ApiError(status="CONFLICT", message="User already exist")
 
-        _hashed_password = await hash_password(data.user_password)
+        # encriptando senha do usuario para enviar para o banco de dados
+        _hashed_password = await hash_password(data.user_password) 
 
         return await prisma.user.create(
             data={

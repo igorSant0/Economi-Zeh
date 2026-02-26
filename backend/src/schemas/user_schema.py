@@ -16,12 +16,13 @@ class UserQuerys(BaseModel):
 
 
 class UserCreateData(BaseModel):
-    user_name: str = Field(..., min_length=3, description="Full name")
+    user_name: str = Field(..., min_length=2, description="Full name")
     user_email: EmailStr = Field(..., description="Unique system e-mail")
     user_cpf: str = Field(..., min_length=11, max_length=14, description="CPF")
     user_phone: str
     user_password: str = Field(..., min_length=6, description="Strong password")
     model_config = ConfigDict(extra="forbid")
+
 
 
 class UserUpdateData(BaseModel):
