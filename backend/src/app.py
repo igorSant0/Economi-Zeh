@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from src.db import prisma
 from src.lib.utils.apiError import ApiError
 from src.routes.private.user_routes import router as user_router
+from src.routes.private.login_routes import router as login_router
 
 
 @asynccontextmanager
@@ -20,6 +21,7 @@ app = FastAPI(title="Economi-Zeh API", lifespan=lifespan)
 
 
 app.include_router(user_router)
+app.include_router(login_router)
 
 
 @app.exception_handler(ApiError)

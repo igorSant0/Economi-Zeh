@@ -12,7 +12,7 @@ async def userSeed(prisma: Prisma):
             "user_email": "admin@economizeh.com",
             "user_cpf": "00000000000",
             "user_phone": "999999999",
-            "user_password": "admin_123",
+            "user_password": "@ValidPassword123",
         },
         {
             "id_user": "user-uuid-2",
@@ -20,7 +20,7 @@ async def userSeed(prisma: Prisma):
             "user_email": "igor@economizeh.com",
             "user_cpf": "11111111111",
             "user_phone": "888888888",
-            "user_password": "igor_123",
+            "user_password": "@ValidPassword123",
         },
         {
             "id_user": "user-uuid-3",
@@ -28,7 +28,7 @@ async def userSeed(prisma: Prisma):
             "user_email": "hugao@economizeh.com",
             "user_cpf": "22222222222",
             "user_phone": "777777777",
-            "user_password": "hugao_123",
+            "user_password": "@ValidPassword123",
         },
     ]
 

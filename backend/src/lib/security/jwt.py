@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import jwt
+from jwt.exceptions import ExpiredSignatureError, DecodeError
 from src.config.envs_config import settings
 
 SECRET_KEY: str = settings.SECRET_KEY
@@ -40,7 +41,7 @@ def decode_access_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
-    except jwt.ExpiredSignatureError:
+    except ExpiredSignatureError:
         raise ValueError("Token expirado")
-    except jwt.InvalidTokenError:
+    except DecodeError:
         raise ValueError("Token inválido")
